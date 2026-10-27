@@ -18,10 +18,15 @@ function fakeStorage() {
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
 describe('validateProject', () => {
-  it('accepts the sample and fills the Mixed plan from Level', () => {
+  it('accepts the sample and keeps its Mixed plan', () => {
     const { project, error } = validateProject(clone(sampleProject))
     expect(error).toBeNull()
-    expect(project.mixedPlan).toEqual(decisionsFromPlan(levelPlan(sampleProject)))
+    expect(project.mixedPlan).toEqual(sampleProject.mixedPlan)
+  })
+
+  it('fills a missing Mixed plan from Level', () => {
+    const { mixedPlan: _, ...data } = clone(sampleProject)
+    expect(validateProject(data).project.mixedPlan).toEqual(decisionsFromPlan(levelPlan(sampleProject)))
   })
 
   it('keeps a valid Mixed plan and drops unknown fields', () => {

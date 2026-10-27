@@ -30,10 +30,11 @@ describe.each(Object.entries(projects))('optimizePlan (%s)', (_, project) => {
     }
   })
 
-  it('costs no more than Chase, Level and the default Mixed plan', () => {
+  it('costs no more than Chase, Level, the default Mixed plan and the sample Mixed plan', () => {
     const level = levelPlan(project)
     const defaultMixed = completePlan(project, decisionsFromPlan(level))
-    for (const plan of [chasePlan(project), level, defaultMixed]) {
+    const samplePlans = project.mixedPlan ? [completePlan(project, project.mixedPlan)] : []
+    for (const plan of [chasePlan(project), level, defaultMixed, ...samplePlans]) {
       expect(result.objective).toBeLessThanOrEqual(evaluatePlan(project, plan).totalCost + 1e-6)
     }
   })

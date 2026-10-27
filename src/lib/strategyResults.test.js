@@ -7,15 +7,34 @@ import { STRATEGIES, computeStrategyResults, savingsPercent } from './strategyRe
 
 describe('computeStrategyResults', () => {
   it('evaluates all four strategies on the sample data', () => {
-    const project = withDefaultMixedPlan(sampleProject)
+    const { mixedPlan: _, ...withoutMixed } = sampleProject
+    const project = withDefaultMixedPlan(withoutMixed)
     const results = computeStrategyResults(project, optimizePlan(project))
     for (const { key } of STRATEGIES) {
       expect(results[key].plan).toHaveLength(12)
       expect(results[key].evaluation.totalCost).toBeGreaterThan(0)
     }
     expect(results.optimal.check.passed).toBe(true)
-    // The default Mixed plan is the Level plan.
+    // Without a saved Mixed plan, the Mixed plan is pre-filled with Level.
     expect(results.mixed.evaluation.totalCost).toBe(results.level.evaluation.totalCost)
+  })
+
+  it('gives four clearly different costs for the sample, ordered Chase > Level > Mixed > Optimal', () => {
+    const results = computeStrategyResults(sampleProject, optimizePlan(sampleProject))
+    const costs = STRATEGIES.map(({ key }) => results[key].evaluation.totalCost)
+    for (let i = 1; i < costs.length; i += 1) expect(costs[i]).toBeLessThan(costs[i - 1] * 0.97)
+    for (const { key } of STRATEGIES) expect(results[key].evaluation.violations).toEqual([])
+  })
+
+  it('the sample optimal plan uses overtime at the cap before subcontracting', () => {
+    const { plan } = optimizePlan(sampleProject)
+    const { maxOvertimeHoursPerWorkerPerMonth } = sampleProject.settings
+    const subcontractMonths = plan.filter((m) => m.subcontracted > 0)
+    expect(subcontractMonths.length).toBeGreaterThan(0)
+    for (const month of subcontractMonths) {
+      expect(month.overtimeHours).toBeCloseTo(maxOvertimeHoursPerWorkerPerMonth * month.workers, 6)
+    }
+    expect(Math.max(...plan.map((m) => m.inventory))).toBeGreaterThan(1000)
   })
 })
 
