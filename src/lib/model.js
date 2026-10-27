@@ -82,3 +82,17 @@ export function createEmptyPlan() {
 export function regularUnitsPerWorker(settings) {
   return settings.hoursPerWorkerPerMonth / settings.laborHoursPerUnit
 }
+
+// Immutable update helpers used by the input forms.
+export function updateSetting(project, key, value) {
+  return { ...project, settings: { ...project.settings, [key]: value } }
+}
+
+export function updateCost(project, key, value) {
+  return { ...project, costs: { ...project.costs, [key]: value } }
+}
+
+export function updateDemand(project, index, units) {
+  const demand = project.demand.map((entry, i) => (i === index ? { ...entry, units } : entry))
+  return { ...project, demand }
+}

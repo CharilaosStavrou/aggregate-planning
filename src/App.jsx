@@ -1,11 +1,16 @@
+import { useState } from 'react'
+import Header from './components/Header.jsx'
+import InputPanel from './components/InputPanel.jsx'
+import { sampleProject } from './data/sampleProject.js'
+
 function App() {
+  const [project, setProject] = useState(sampleProject)
+
   return (
     <div className="app">
-      <header className="appHeader">
-        <h1>Aggregate Planning Tool</h1>
-      </header>
+      <Header />
       <main className="appMain">
-        <p>Setup complete. Inputs follow in Phase 2.</p>
+        <InputPanel project={project} onChange={setProject} />
       </main>
     </div>
   )

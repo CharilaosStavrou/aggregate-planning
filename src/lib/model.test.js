@@ -8,6 +8,9 @@ import {
   createEmptyProject,
   createPlanMonth,
   regularUnitsPerWorker,
+  updateCost,
+  updateDemand,
+  updateSetting,
 } from './model.js'
 import { sampleProject } from '../data/sampleProject.js'
 
@@ -44,5 +47,19 @@ describe('data model', () => {
     expect(Object.keys(sampleProject.settings)).toEqual(SETTINGS_KEYS)
     expect(Object.keys(sampleProject.costs)).toEqual(COST_KEYS)
     expect(sampleProject.demand).toHaveLength(PLANNING_HORIZON)
+  })
+})
+
+describe('update helpers', () => {
+  it('update one value without mutating the original project', () => {
+    const original = createEmptyProject()
+    const withSetting = updateSetting(original, 'initialWorkers', 7)
+    const withCost = updateCost(original, 'hiringCostPerWorker', 100)
+    const withDemand = updateDemand(original, 3, 250)
+    expect(withSetting.settings.initialWorkers).toBe(7)
+    expect(withCost.costs.hiringCostPerWorker).toBe(100)
+    expect(withDemand.demand[3]).toEqual({ month: 'Apr', units: 250 })
+    expect(original.settings.initialWorkers).toBe(0)
+    expect(original.demand[3].units).toBe(0)
   })
 })
