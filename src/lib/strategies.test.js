@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { evaluatePlan } from './planEvaluation.js'
+import { decisionsFromPlan, updateDecision } from './mixedPlan.js'
+import { completePlan, evaluatePlan } from './planEvaluation.js'
 import { chasePlan, levelPlan, levelWorkforce } from './strategies.js'
 import { createTestProject } from './testProject.js'
 import { sampleProject } from '../data/sampleProject.js'
@@ -96,5 +97,17 @@ describe('strategies on the sample data', () => {
       expect(result.violations).toEqual([])
       expect(plan[11].inventory).toBeGreaterThanOrEqual(sampleProject.settings.endingInventoryTarget)
     }
+  })
+})
+
+describe('Mixed plan helpers', () => {
+  it('prefilled from Level, the Mixed plan equals the Level plan', () => {
+    const project = createTestProject()
+    const level = levelPlan(project)
+    const decisions = decisionsFromPlan(level)
+    expect(completePlan(project, decisions)).toEqual(level)
+    const edited = updateDecision(decisions, 2, 'overtimeHours', 20)
+    expect(edited[2]).toEqual({ workers: 11, overtimeHours: 20, subcontracted: 0 })
+    expect(decisions[2].overtimeHours).toBe(0)
   })
 })

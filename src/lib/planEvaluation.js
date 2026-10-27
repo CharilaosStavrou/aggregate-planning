@@ -92,7 +92,7 @@ export function findViolations(project, plan) {
   const violations = []
   const add = (type, monthIndex, message) => {
     const prefix = monthIndex === null ? '' : `${demand[monthIndex].month}: `
-    violations.push({ type, monthIndex, message: prefix + message })
+    violations.push({ type, monthIndex, detail: message, message: prefix + message })
   }
 
   plan.forEach((month, t) => {
