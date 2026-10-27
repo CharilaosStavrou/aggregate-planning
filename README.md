@@ -1,5 +1,7 @@
 # Aggregate Planning Tool
 
+**Live demo:** [aggregate-planning.vercel.app](https://aggregate-planning.vercel.app/)
+
 A browser-based tool for aggregate production planning over a 12-month horizon. It compares the
 classic **Chase** and **Level** strategies with a user-defined **Mixed** plan and a **cost-optimal**
 plan found with linear programming. Everything runs in the browser: there is no backend.
